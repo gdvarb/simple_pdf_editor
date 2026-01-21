@@ -3,6 +3,7 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 int main() {
@@ -11,6 +12,13 @@ int main() {
 
   // FileManager instance
   FileManager fm(upload_folder);
+
+  CROW_ROUTE(app, "/")([]() {
+    std::ifstream in_file("../index.html");
+    std::stringstream ss{};
+    ss << in_file.rdbuf();
+    return ss.str();
+  });
 
   CROW_ROUTE(app, "/upload")
       .methods(crow::HTTPMethod::Post)([&fm](const crow::request &req) {
