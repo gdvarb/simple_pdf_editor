@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/gv/code/c++/simple_server/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
