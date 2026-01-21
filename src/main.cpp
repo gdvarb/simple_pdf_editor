@@ -1,6 +1,7 @@
 #include "../include/FileManager.h"
 #include "crow_all.h"
 #include <chrono>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -12,6 +13,23 @@ int main() {
 
   // FileManager instance
   FileManager fm(upload_folder);
+  namespace fs = std::filesystem;
+
+  CROW_ROUTE(app, "/download/<string>")(
+      [](const crow::request &req, const std::string &file_name) {
+        std::string full_path{"../upload/" + file_name};
+        if (!fs::exists(full_path)) {
+          return crow::response(404);
+        }
+
+        std::ifstream in_file(full_path);
+        std::stringstream ss{};
+        ss << in_file.rdbuf();
+
+        crow::response res(ss.str());
+        res.set_header("Content-Type", "application/pdf");
+        return res;
+      });
 
   CROW_ROUTE(app, "/")([]() {
     std::ifstream in_file("../index.html");
